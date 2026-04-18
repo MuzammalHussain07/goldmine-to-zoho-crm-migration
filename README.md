@@ -1,4 +1,5 @@
 Project:GoldMine → Zoho CRM Migration Example
+👉 This is a working ETL demo project (ready to run with sample data)
 
 Description
 
