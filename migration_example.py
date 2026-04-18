@@ -1,8 +1,11 @@
 import csv
 import requests
+import os
 
 # Zoho CRM API configuration
-ZOHO_ACCESS_TOKEN = "YOUR_ZOHO_ACCESS_TOKEN"
+# (Token is taken from system environment for security)
+ZOHO_ACCESS_TOKEN = os.getenv("ZOHO_ACCESS_TOKEN")
+
 ZOHO_API_URL = "https://www.zohoapis.com/crm/v2/Contacts"
 
 headers = {
@@ -10,7 +13,9 @@ headers = {
     "Content-Type": "application/json"
 }
 
-# Extract from GoldMine export
+# ----------------------------
+# STEP 1: Extract CSV data
+# ----------------------------
 def extract_goldmine_contacts(file_path):
     contacts = []
     with open(file_path, newline='', encoding='utf-8') as csvfile:
@@ -20,7 +25,9 @@ def extract_goldmine_contacts(file_path):
     return contacts
 
 
-# Transform fields to Zoho format
+# ----------------------------
+# STEP 2: Transform data
+# ----------------------------
 def transform_to_zoho(contact):
     return {
         "First_Name": contact.get("FIRSTNAME"),
@@ -31,7 +38,9 @@ def transform_to_zoho(contact):
     }
 
 
-# Load into Zoho CRM
+# ----------------------------
+# STEP 3: Load into Zoho CRM
+# ----------------------------
 def load_to_zoho(transformed_contacts):
     payload = {"data": transformed_contacts}
 
@@ -44,8 +53,12 @@ def load_to_zoho(transformed_contacts):
     print(response.json())
 
 
+# ----------------------------
+# MAIN ETL RUN
+# ----------------------------
 def run_etl():
-    goldmine_contacts = extract_goldmine_contacts("goldmine_contacts.csv")
+    # IMPORTANT: using sample_data folder path for demo
+    goldmine_contacts = extract_goldmine_contacts("sample_data/goldmine_contacts.csv")
 
     zoho_contacts = []
     for contact in goldmine_contacts:
